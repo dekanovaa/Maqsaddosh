@@ -5,6 +5,8 @@ import slide1 from "../../assets/images/slide1.png";
 import slide2 from "../../assets/images/slide2.png";
 import slide3 from "../../assets/images/slide3.png";
 import { useNavigate } from "react-router-dom";
+import { useSwipeable } from 'react-swipeable';
+
 
 function Intro() {
     const navigate = useNavigate();
@@ -23,45 +25,61 @@ function Intro() {
       setCurrentSlide((prev) => prev + 1);
     }
   };
+  const handlers = useSwipeable({
+    onSwipedLeft: () => {
+      if (currentSlide === slides.length - 1) {
+        navigate("/welcome");
+      } else {
+        setCurrentSlide((prev) => prev + 1);
+      }
+    },
+    onSwipedRight: () => {
+      if (currentSlide > 0) {
+        setCurrentSlide((prev) => prev - 1);
+      }
+    },
+    trackTouch: true,
+    trackMouse: true,
+  });
 
   return (
     <div className="intro">
       <Header />
       <div className="intro-container">
         <div className="slider-container">
-          <div className="slides">
-            <div
-              className="slides-inner"
-              style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-            >
-              {slides.map((slide) => (
-                <div key={slide.id} className="slide">
-                  <div className="text">
-                  <p className="slide-text">{slide.text}</p>
-                  </div>
-                  <img
-                    src={slide.image}
-                    alt={`Slide ${slide.id}`}
-                    style={{
-                      width:
-                        slide.id === 1
-                          ? "231px"
-                          : slide.id === 2
-                          ? "250px"
-                          : "164px",
-                      height:
-                        slide.id === 1
-                          ? "264px"
-                          : slide.id === 2
-                          ? "280px"
-                          : "268px",
-                      objectFit: "contain",
-                    }}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
+        <div className="slides" {...handlers}>
+  <div
+    className="slides-inner"
+    style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+  >
+    {slides.map((slide) => (
+      <div key={slide.id} className="slide">
+        <div className="text">
+          <p className="slide-text">{slide.text}</p>
+        </div>
+        <img
+          src={slide.image}
+          alt={`Slide ${slide.id}`}
+          style={{
+            width:
+              slide.id === 1
+                ? "231px"
+                : slide.id === 2
+                ? "250px"
+                : "164px",
+            height:
+              slide.id === 1
+                ? "264px"
+                : slide.id === 2
+                ? "280px"
+                : "268px",
+            objectFit: "contain",
+          }}
+        />
+      </div>
+    ))}
+  </div>
+</div>
 
           <div className="pagination">
             {slides.map((_, index) => (
